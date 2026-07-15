@@ -1,0 +1,19 @@
+services:
+  user-service:
+    build:
+      context: .
+    container_name: user-service
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_ENV: production
+      SECRET_KEY: ${SECRET_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      DATABASE_URL: sqlite:////data/users.db
+      ACCESS_TOKEN_EXPIRES_MINUTES: 30
+    volumes:
+      - user-data:/data
+    restart: unless-stopped
+
+volumes:
+  user-data:
