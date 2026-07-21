@@ -1,3 +1,14 @@
+def remove_duplicates(arr):
+    seen = set()
+    unique_arr = [x for x in arr if not (x in seen or seen.add(x))]
+    return unique_arr
+
+# Example usage
+words = ["apple", "banana", "apple", "pear", "banana", "orange", "apple"]
+unique_words = remove_duplicates(words)
+print(unique_words)  # Output: ['apple', 'banana', 'pear', 'orange']
+
+
 def remove_duplicate_words(s):
     words = s.split()  # Split the string into a list of words
     unique_words = []
