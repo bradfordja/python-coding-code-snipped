@@ -23,6 +23,10 @@ def array_addition(arr):
 
     return "false"
 
+print(array_addition([4, 6, 23, 10, 1, 3]))  # Output: "true"
+print(array_addition([5, 7, 16, 1, 2]))  # Output: "false"
+print(array_addition([3, 5, -1, 8, 12]))  # Output: "true"
+
 ## Interview note: 
 ## Uses subset-sum logic with a set instead of checking every combination manually.
 ## Complexity: O(n × s), where s is number of possible sums.

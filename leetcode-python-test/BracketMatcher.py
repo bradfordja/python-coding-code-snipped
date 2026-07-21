@@ -17,6 +17,10 @@ def bracket_matcher(s):
 
     return 1 if count == 0 else 0
 
+print(bracket_matcher("((()))"))
+print(bracket_matcher("(()"))
+print(bracket_matcher(")("))
+
 ## Interview note: 
 ## Uses O(1) space because only one bracket type exists.
 ## Complexity: O(n) time, O(1) space.

@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Remitted payment processor Lambda sample.
+
+Globals:
+  Function:
+    Runtime: python3.11
+    Timeout: 30
+    MemorySize: 512
+    Architectures:
+      - arm64
+
+Resources:
+  RemittanceProcessorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: remittance_processor.lambda_handler.handler
+      Environment:
+        Variables:
+          PAYMENT_EVENTS_TOPIC_ARN: !Ref PaymentEventsTopic
+          PAYMENT_RECEIPT_BUCKET: !Ref PaymentReceiptBucket
+          PAYMENT_API_BASE_URL: "https://payments.example.com"
+          PAYMENT_API_KEY: "{{resolve:secretsmanager:payment-api-key:SecretString:api_key}}"
+          REDIS_HOST: "replace-with-elasticache-host"
+          REDIS_PORT: "6379"
+          REDIS_TLS: "true"
+          RDS_HOST: "replace-with-rds-host"
+          RDS_PORT: "5432"
+          RDS_DB_NAME: "payments"
+          RDS_USER: "{{resolve:secretsmanager:rds-credentials:SecretString:username}}"
+          RDS_PASSWORD: "{{resolve:secretsmanager:rds-credentials:SecretString:password}}"
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - sns:Publish
+              Resource: !Ref PaymentEventsTopic
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+                - s3:GetObject
+              Resource: !Sub "${PaymentReceiptBucket.Arn}/*"
+            - Effect: Allow
+              Action:
+                - sts:GetCallerIdentity
+              Resource: "*"
+      Events:
+        PaymentRequestTopic:
+          Type: SNS
+          Properties:
+            Topic: !Ref PaymentRequestsTopic
+
+  PaymentRequestsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: payment-requests
+
+  PaymentEventsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: payment-events
+
+  PaymentReceiptBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true

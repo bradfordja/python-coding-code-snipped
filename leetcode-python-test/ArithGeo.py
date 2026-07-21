@@ -28,6 +28,10 @@ def arith_geo(arr):
 
     return -1
 
+print(arith_geo([2, 4, 6, 8]))  # Arithmetic
+print(arith_geo([2, 6, 18, 54]))  # Geometric
+print(arith_geo([1, 2, 4, 8]))  # -1
+
 ## Interview note: 
 ## Check both patterns in one pass.
 ## Complexity: O(n)
